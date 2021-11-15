@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	rqp "github.com/timsolov/rest-query-parser"
-	"gorm.io/gorm"
 	"net/http"
 	"service_catalog/models"
 	"strconv"
+
+	rqp "github.com/timsolov/rest-query-parser"
+	"gorm.io/gorm"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -27,7 +28,7 @@ func (svc *ServiceCatalogSvc) FindById(ctx context.Context) echo.HandlerFunc {
 		id, err := strconv.Atoi(ectx.Param("id"))
 		if err != nil {
 			log.Error(err)
-			return Return(ectx, http.StatusBadRequest, fmt.Errorf("Invalid Id"), nil)
+			return Return(ectx, http.StatusBadRequest, fmt.Errorf("Invalid Id: %v", err), nil)
 		}
 		var service models.Service
 		tx := svc.client.Find(&service, id)
@@ -45,7 +46,7 @@ func (svc *ServiceCatalogSvc) FindVersions(ctx context.Context) echo.HandlerFunc
 		id, err := strconv.Atoi(ectx.Param("id"))
 		if err != nil {
 			log.Error(err)
-			return Return(ectx, http.StatusBadRequest, fmt.Errorf("Invalid Id"), nil)
+			return Return(ectx, http.StatusBadRequest, fmt.Errorf("Invalid Id:%v", err), nil)
 		}
 		var versions []models.Version
 		tx := svc.client.Where("service_id=?", id).Find(&versions)
@@ -69,7 +70,7 @@ func (svc *ServiceCatalogSvc) List(ctx context.Context) echo.HandlerFunc {
 
 		if err != nil {
 			log.Error(err)
-			return Return(ectx, http.StatusInternalServerError, err, nil)
+			return Return(ectx, http.StatusBadRequest, err, nil)
 		}
 
 		var services []struct {
@@ -109,7 +110,7 @@ func (svc *ServiceCatalogSvc) List(ctx context.Context) echo.HandlerFunc {
 type Response struct {
 	Error string            `json:"error,omitempty"`
 	Data  interface{}       `json:"data,omitempty"`
-	Links map[string]string `json:"links,omitempty`
+	Links map[string]string `json:"links,omitempty"`
 }
 
 func ReturnWithLinks(ectx echo.Context, status int, err error, data interface{}, links map[string]string) error {
