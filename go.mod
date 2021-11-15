@@ -11,6 +11,7 @@ require (
 )
 
 require (
+	github.com/brianvoe/gofakeit/v6 v6.9.0 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.2 // indirect
